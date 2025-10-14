@@ -59,7 +59,7 @@ jobs:
       - name: Save and commit PDF
         run: |
           mkdir -p builds
-          cp main.pdf "builds/main_${{ steps.ver.outputs.changelist }}.pdf"
+          cp itManual.pdf "builds/itManual_${{ steps.ver.outputs.changelist }}.pdf"
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add builds/*.pdf version.tex
