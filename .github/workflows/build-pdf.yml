@@ -3,7 +3,7 @@ name: Build PDF on push
 on:
   push:
     branches: [ "main", "master" ]
-
+  workflow_dispatch:
 permissions:
   contents: write
 
