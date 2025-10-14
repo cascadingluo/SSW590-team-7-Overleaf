@@ -60,6 +60,9 @@ jobs:
         run: |
           mkdir -p builds
 
+      - name: Save and commit PDF
+        run: |
+          cp itManual.pdf "builds/itManual_${{ github.sha }}.pdf"
 
       - name: Upload PDF
         uses: actions/upload-artifact@v4
