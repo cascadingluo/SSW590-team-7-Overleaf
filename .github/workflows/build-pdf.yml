@@ -54,7 +54,7 @@ jobs:
           pre_compile: |
             tlmgr option repository https://mirror.ctan.org/systems/texlive/tlnet
             tlmgr update --self
-            tlmgr install minted fvextra fancyvrb framed upquote lineno xcolor etoolbox shellesc siunitx titlesec caption pgfplots
+            tlmgr install minted fvextra fancyvrb framed upquote lineno xcolor etoolbox siunitx titlesec caption pgfplots
 
       - name: Save and commit PDF
         run: |
