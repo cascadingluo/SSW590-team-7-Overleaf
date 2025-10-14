@@ -47,13 +47,14 @@ jobs:
           root_file: itManual.tex
           args: -pdfdvi -file-line-error -halt-on-error -interaction=nonstopmode
           latexmk_shell_escape: true
-          pre_compile: |
-            cp ../version.tex .
-            apt-get update && apt-get install -y python3-pygments
+         # pre_compile: |
+           # cp ../version.tex .
+           # apt-get update && apt-get install -y python3-pygments
           # Uncomment and edit if you need extra packages
-          # pre_compile: |
-          #   tlmgr update --self
-          #   tlmgr install minted siunitx titlesec caption pgfplots
+           pre_compile: |
+             tlmgr option repository https://mirror.ctan.org/systems/texlive/tlnet
+             tlmgr update --self
+             tlmgr install minted fvextra fancyvrb framed upquote lineno xcolor etoolbox shellesc siunitx titlesec caption pgfplots
 
       - name: Save and commit PDF
         run: |
