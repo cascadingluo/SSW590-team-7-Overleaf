@@ -65,3 +65,7 @@ jobs:
           git add builds/*.pdf version.tex
           git commit -m "CI: build PDF CL=${{ steps.ver.outputs.changelist }}" || exit 0
           git push
+
+      - name: Clean LaTeX build files
+        run: |
+          rm -f *.aux *.log *.out *.toc *.fdb_latexmk *.fls
