@@ -65,7 +65,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: itManual
-          path: builds/itManual_${{ github. sha}}. pdf
+          path: builds/itManual_${{ github. sha}}.pdf
 
       - name: Set GitHub user config
         run: |
