@@ -62,7 +62,7 @@ jobs:
 
       - name: Save and commit PDF
         run: |
-          cp itManual.pdf "builds/itManual_${{ github.sha }}.pdf"
+          cp "2025F_SSW590_07 (3)/ itManual.pdf" "builds/itManual_${{ github.sha }}.pdf"
 
       - name: Upload PDF
         uses: actions/upload-artifact@v4
