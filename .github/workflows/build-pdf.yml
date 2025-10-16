@@ -46,13 +46,18 @@ jobs:
           working_directory: "2025F_SSW590_07-3"
           root_file: itManual.tex
           latexmk_use_xelatex: true
-          args: -file-line-error -halt-on-error -interaction=nonstopmode -output-directory=. itManual.tex
+          args: -norc -file-line-error -halt-on-error -interaction=nonstopmode -output-directory=. itManual.tex
           latexmk_shell_escape: true
          # pre_compile: |
            # cp ../version.tex .
            # apt-get update && apt-get install -y python3-pygments
           # Uncomment and edit if you need extra packages
           pre_compile: |
+            set -eux
+            export PATH="/opt/texlive/texdir/bin/x86_64-linux:$PATH"
+            which xelatex || true
+            xelatex --version || true
+            echo "PATH=$PATH"
             tlmgr option repository https://mirror.ctan.org/systems/texlive/tlnet
             tlmgr update --self
             tlmgr install minted fvextra fancyvrb framed upquote lineno xcolor etoolbox siunitx titlesec caption pgfplots
