@@ -3,6 +3,7 @@ Rc files read:
   latexmkrc
 Latexmk: This is Latexmk, John Collins, 27 Dec. 2024. Version 4.86a.
 Latexmk: Changing directory to '/var/lib/overleaf/data/compiles/68eabaec5adfde60821a1298-68eab97f534beb493f28d48a/'
+No existing .aux file, so I'll make a simple one, and require run of *latex.
 Force *latex to be remade.
 Latexmk: applying rule 'pdflatex'...
 Rule 'pdflatex':  Reasons for rerun
