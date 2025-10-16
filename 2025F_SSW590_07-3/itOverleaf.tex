@@ -599,33 +599,6 @@ git pull --rebase origin main
 git push
 \end{minted}
 
-We created a file for syncing github with our server overleaf:
-\begin{minted} {bash}
-#!/bin/bash
-# === Configuration ===
-CONTAINER_NAME="overleaf-docker-overleaf-1"
-PROJECT_PATH="/var/lib/overleaf/data/compiles/68eabaec5adfde60821a1298-68eab97f534beb493f28d48a"
-GITHUB_REPO_PATH="/root/overleaf-docker/ssw590-overleaf"
-TARGET_SUBFOLDER="2025F_SSW590_07-3"
-
-# === Sync Overleaf project into GitHub repo ===
-echo "Copying project from container to GitHub repo..."
-docker cp "${CONTAINER_NAME}:${PROJECT_PATH}/." "${GITHUB_REPO_PATH}/${TARGET_SUBFOLDER}/"
-
-cd "$GITHUB_REPO_PATH" || exit
-
-# === Commit and push ===
-git add .
-git commit -m "Auto-sync from Overleaf container on $(date -u +'%Y-%m-%d %H:%M:%S')" || true
-git push origin main
-\end{minted}
-
-Whenever we update the files on our Overleaf, we run:
-\begin{minted} {bash}
-./sync_overleaf_to_github.sh
-\end{minted}
-to sync all of our changes.
-
 \\
 
 
