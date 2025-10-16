@@ -1,0 +1,336 @@
+\chapter{AWS \\
+\small{\textit{-- Gavin Lam, Luo Xu, Annanya Jain}
+\index{AWS} 
+\index{Chapter!AWS}
+\label{Chapter::AWS}}}
+
+To get our website deployed, we followed the steps in the DockerLocalAndAWS.pdf document with some changes to the code as parts in the document did not work on our machines.\medskip
+
+\noindent First we created an AWS root account at \textcolor{blue}{aws.amazon.com}. MFA was enabled on the root account and our region was set to us-east-2. A cost budget was set up as well to monitor costs. The SSO start URL was also recorded to be used later\medskip
+
+\noindent We then enabled the IAM Identity center and created a new user with an alternate email. At first this user wasn't able to access any dashboards at it had no roles or permissions. This user was given the permission set AdministratorAccess by the root account and after a relog was able to access a dashboard. From this dashboard the AWS Access Key ID, AWS Secret Access Key, and AWS session ID were written down. \medskip
+
+\noindent After the AWS accounts were correctly set up, we ran the commands in the document on the terminal.
+\begin{minted}{shell}
+aws configure sso
+\end{minted}
+
+\noindent This command prompted us to give answers
+
+\begin{minted}{shell}
+#SSO session name:
+#SSO start URL:
+#SSO region:
+#Account:
+#Role:
+#Default region:
+#Output:
+\end{minted}
+
+\noindent After entering all the details the login were saved.
+
+The command ran next was 
+
+\begin{minted}{shell}
+aws configure 
+\end{minted}
+
+\noindent This command prompted us to give answers
+
+\begin{minted}{shell}
+#AWS Access key ID:
+#AWS Secret Access key:
+#AWS Session ID:
+#Default region:
+#Output:
+\end{minted}
+
+\noindent After entering all the details we successfully logged in and ran another command to confirm.
+
+\begin{minted}{shell}
+aws sts get-caller-identity
+\end{minted}
+
+\noindent The next steps were to create an ECR repository as stated in the document. We first set some environment variables through these commands.
+
+\begin{minted}{shell}
+export AWS_REGION=us-east-2
+export ECR_REPO=myapp
+export IMAGE_TAG=v1
+export CONTAINER_PORT=3000
+export AWS_ACCOUNT_ID="$(aws sts get-caller-identity --query Account --output text --profile (my account here))"
+\end{minted}
+
+\noindent After setting the variables we created a new ECR repository through these commands.
+
+\begin{minted}{shell}
+aws ecr create-repository \
+    --repository-name "$ECR_REPO" \
+    --image-scanning-configuration scanOrPush=true \
+    --region "AWS_REGION" --profile (my account here)
+\end{minted}
+
+\noindent AWS CLI was then used to obtain a short-lived registry token and logged in Docker.
+
+\begin{minted}{shell}
+aws ecr get-login-password --region "$AWS_REGION" --profile default \
+| docker login --username AWS --password-stdin \
+    "$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com"
+\end{minted}
+
+\noindent Our local image was then built, tagged, and pushed. These commands were run from the directory containing the Dockerfile.
+
+\begin{minted}{shell}
+docker build --platform linux/amd64 -t "$ECR_REPO:$IMAGE_TAG" .
+
+docker tag "$ECR_REPO:$IMAGE_TAG" \
+"$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO:$IMAGE_TAG"
+
+docker push "$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO:$IMAGE_TAG"
+\end{minted}
+
+\noindent Verifying the image in ECR was next
+
+
+\begin{minted}{shell}
+aws ecr describe-images \
+    --repository-name "$ECR_REPO" \
+    --region "$AWS_REGION" --profile default \
+    --query 'imageDetails[].imageTags'
+\end{minted}
+
+\noindent The next step of quick deploying with App Runner was where we ran into a roadblock. The code shown when inputted resulted in the error below. 
+
+
+\begin{minted}{shell}
+export APP_NAME=my-apprunner-app
+
+aws apprunner create-service \
+    --service-name "$APP_NAME" \
+    --region "$AWS_REGION" --profile default \
+    --source-configuration "{
+        \"ImageRepository\": {
+            \"ImageIdentifier\": \"$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO:$IMAGE_TAG\",
+            \"ImageRepositoryType\": \"ECR\",
+            \"ImageConfiguration\": {\"Port\": \"$CONTAINER_PORT\"}
+    },
+\"AutoDeploymentsEnabled\": true
+}" \
+--instance-configuration "{\"Cpu\":\"1 vCPU\",\"Memory\":\"2 GB\"}"
+\end{minted}
+
+\begin{minted}{shell}
+An error occurred (InvalidRequestException) when calling the CreateService operation: Authentication configuration is invalid.
+\end{minted}
+
+\noindent After looking at online resources we assumed that the permission set AdministratorAccesss was not working as we hoped and didn't give us the permissions we needed to use CreateService. In order to fix this we created a trust policy named AppRunnerECRAccessRole in IAM roles. The json used is:
+
+\begin{minted}{JSON}
+{ "Version": "2012-10-17", 
+    "Statement": [ 
+    { 
+      "Effect": "Allow", 
+      "Action": "iam:PassRole", 
+      "Resource": "arn:aws:iam::(our account id here):role/AppRunnerECRAccessRole" 
+    }, 
+    { 
+      "Effect": "Allow", 
+      "Action": [ "apprunner:CreateService", "apprunner:UpdateService", 
+      "apprunner:DeleteService" ], 
+      "Resource": "*" } 
+    ] 
+}
+
+\end{minted}
+
+\noindent After relogging the SSO session and rerunning early commands to confirm we are logged in properly everywhere we retried the original deploying command again. We did some more research and found out more commands we could try. First we had to update the trust policy to replace the second bracket of code. 
+
+\begin{minted}{JSON}
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": { "Service": "build.apprunner.amazonaws.com" },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+
+\end{minted}
+
+\noindent The final inline policy we used is
+
+\begin{minted}{JSON}
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    { 
+      "Effect": "Allow", 
+      "Action": "iam:PassRole", 
+      "Resource": "arn:aws:iam::(our account id here):role/AppRunnerECRAccessRole" 
+    }, 
+    {
+      "Effect": "Allow",
+      "Principal": { "Service": "build.apprunner.amazonaws.com" },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+
+\end{minted}
+
+
+\noindent We then had to attach permissions to the role. The AWS managed policy AWSAppRunnerServicePolicyForECRAccess was added. After confirming the role we retried the command again. The error persisted. We were stuck at this point so we prompted chatGPT multiple times before it recommended us to correct the create-service command with safe quoting, i.e. use single quotes around the JSON blocks so the shell does not break the quoting. The new create-service command is
+
+\begin{minted}{shell}
+aws apprunner create-service \
+  --service-name "$APP_NAME" \
+  --region "$AWS_REGION" --profile default \
+  --source-configuration '{
+    "ImageRepository": {
+      "ImageIdentifier": "'"$AWS_ACCOUNT_ID"'.dkr.ecr.'"$AWS_REGION"'.amazonaws.com/'"$ECR_REPO"':'"$IMAGE_TAG"'",
+      "ImageRepositoryType": "ECR",
+      "ImageConfiguration": { "Port": "'"$CONTAINER_PORT"'" }
+    },
+    "AuthenticationConfiguration": {
+      "AccessRoleArn": "arn:aws:iam::'"$AWS_ACCOUNT_ID"':role/AppRunnerECRAccessRole"
+    },
+    "AutoDeploymentsEnabled": true
+  }' \
+  --instance-configuration '{
+    "Cpu": "1 vCPU",
+    "Memory": "2 GB"
+  }'
+
+
+\end{minted}
+
+\noindent This miraculously went through, and we thought we had successfully created the service. We continued following the steps in the document creating more environment variables. 
+
+\begin{minted}{shell}
+AWS_REGION=us-east-2
+PROFILE=(Our Profile here)
+SERVICE_ARN=(Our Servive ARN here)
+  }
+
+
+\end{minted}
+
+\noindent We then tried to run the service status changes to running command but this resulted in another error:
+
+\begin{minted}{shell}
+
+while true; do
+STATUS=$(aws apprunner describe-service \
+--service-arn "$SERVICE_ARN" \
+--region "$AWS_REGION" --profile "$PROFILE" \
+--query 'Service.Status' --output text)
+echo "Service status: $STATUS"
+case "$STATUS" in RUNNING|CREATE_FAILED|OPERATION_FAILED) break ;; esac
+sleep 4
+done
+
+
+\end{minted}
+
+\begin{minted}{shell}
+
+An error occurred (InvalidRequestException) when calling the DescribeService operation: Authentication configuration is invalid.
+
+
+\end{minted}
+
+\noindent We then read the document again and saw that the next line was to grab the service URL and just hoped that the service was running properly. 
+
+\begin{minted}{shell}
+
+aws apprunner list-services \
+--region "$AWS_REGION" --profile default \
+--query "ServiceSummaryList[?ServiceName=='$APP_NAME'].ServiceUrl" --output text
+
+\end{minted}
+
+
+\noindent Unfortunately, it did not create successfully and we ran into an error website. We were stuck at this point and did not know how to proceed so we decided to leave it for a little bit and come back at a later time to retry. \medskip
+
+\noindent After coming back at a later time we reran through the steps of, aws configure sso, aws configure (with new details this time), sanity test, resetting the environment variables (they did not change from above we just reentered them), authenticated Docker to ECR, built, tagged, and pushed the local image, verified the image in ECR, deployed with App Runner. This is where we ran into the same error, but we found a service on AWS called CloudWatch that essentially replaced the need for the "test the service status changes to running" command. CloudWatch enabled us to look at the logs of services we have tried to deploy. After checking CloudWatch we saw the previous instance of our service had failed due to the ECR repository not being recognized, and saw that our most recent creation of the service had successfully deployed. We then ran the command to get the service URL.
+
+
+\begin{minted}{shell}
+
+aws apprunner list-services \
+--region "$AWS_REGION" --profile default \
+--query "ServiceSummaryList[?ServiceName=='$APP_NAME'].ServiceUrl" --output text
+
+\end{minted}
+
+\noindent Which resulted in
+
+\begin{minted}{shell}
+
+mu3fbjbbv2.us-east-2.awsapprunner.com
+
+\end{minted}
+
+\noindent This URL works, which means our deployment with AWS was successful.
+
+
+\noindent After the successful deployment, we change the code for the original website to use a class-based javascript code instead of methods. The code largely remain the same, we just moved parts of code in the html file into a javascript file and had the html file run the script instead of the code directly. We have the new ColorController class that has DOM references, event binding and the color-changing behaviors. ColorController.init() connects the app on DOMContentLoaded. Here is the code in our new javascript file:
+
+\begin{minted}{javascript}
+class ColorController { //class 
+  constructor({ blueBtnId = "blueBtn", redBtnId = "redBtn", target = document.body } = {}) {
+    this.target = target;
+    this.blueBtn = document.getElementById(blueBtnId);
+    this.redBtn  = document.getElementById(redBtnId);
+    this._bind();
+  }
+
+  // private method to bind event listeners, the same exact code as the ones originally in html
+  _bind() {
+    if (this.blueBtn) {
+      this.blueBtn.addEventListener("click", () => this.setColor("blue"));
+    }
+    if (this.redBtn) {
+      this.redBtn.addEventListener("click", () => this.setColor("red"));
+    }
+  }
+
+  setColor(color) {
+    this.target.style.backgroundColor = color;
+  }
+
+  static init(opts) {
+    return new ColorController(opts);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  ColorController.init();
+});
+
+\end{minted}
+
+Here is the UML diagram for the new code (this was created with the help of GPT-5):
+
+\begin{minted}[fontsize=\small]{text}
++-------------------+
+|   ColorController |
++-------------------+
+| - blueBtn: Button |
+| - redBtn:  Button |
+| - target: Element |
++-------------------+
+| + constructor(...)|
+| - _bind(): void   |
+| + setColor(c):void|
+| + init(...): CC   |
++-------------------+
+
+Notes:
+- constructor wires DOM elements and calls _bind()
+- _bind attaches event listeners to blue/red buttons
+- setColor updates the background color of the target
+- init is a convenience factory method
+\end{minted}

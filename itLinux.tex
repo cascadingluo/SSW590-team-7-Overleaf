@@ -1,0 +1,375 @@
+\chapter{Linux Commands \\
+\small{\textit{-- Spurthi Setty, Gavin Lam, Annanya Jain, Luo Xu}}
+\index{Linux Commands} 
+\index{Chapter!Linux Commands}
+\label{Chapter::Linux Commands}}
+
+\section{Terminal Session}
+
+The following commands were run from
+\texttt{\~/Documents/Devops/Assignment2} and create several test files
+and directories.
+
+\begin{Verbatim}[formatcom=\color{blue}]
+ubuntu@Ubuntu:~/Documents/Devops/Assignment2$ mkdir -p ~/lx-test && cd ~/lx-test
+ubuntu@Ubuntu:~/lx-test$ printf "alpha\nbeta\nGamma\ngamma\nbeta\n" > words.txt
+ubuntu@Ubuntu:~/lx-test$ printf "id,name,dept\n1,Ada,EE\n2,Linus,CS\n3,Grace,EE\n4,Dennis,CS\n" > people.csv
+ubuntu@Ubuntu:~/lx-test$ printf "INFO boot ok\nWARN disk low\nERROR fan fail\nINFO shutdown\n" > sys.log
+ubuntu@Ubuntu:~/lx-test$ dd if=/dev/zero of=blob.bin bs=1K count=48 status=none
+ubuntu@Ubuntu:~/lx-test$ mkdir -p src/lib tmp archive
+ubuntu@Ubuntu:~/lx-test$ printf "one two three four\n" > src/file1.txt
+ubuntu@Ubuntu:~/lx-test$ printf "two three four five\n" > src/file2.txt
+ubuntu@Ubuntu:~/lx-test$ ln -s src/file1.txt link-to-file1
+ubuntu@Ubuntu:~/lx-test$ touch -t 202401020304 old.txt
+\end{Verbatim}
+
+\section{Problem-Set Commands and Outputs}
+
+\subsection{Navigation \& File Ops}
+
+\begin{enumerate}[leftmargin=2em]
+
+  \item \textbf{Present working directory}
+\begin{Verbatim}[formatcom=\color{blue}]
+ubuntu@Ubuntu:~/lx-test$ pwd
+/home/ubuntu/lx-test
+\end{Verbatim}
+
+  \item \textbf{List all entries, including dotfiles}
+\begin{Verbatim}[formatcom=\color{blue}]
+ubuntu@Ubuntu:~/lx-test$ ls -A1
+archive
+blob.bin
+link-to-file1
+old.txt
+people.csv
+src
+sys.log
+tmp
+words.txt
+\end{Verbatim}
+
+  \item \textbf{Copy src/file1.txt to tmp/ only if tmp exists (verbose)}
+\begin{Verbatim}[formatcom=\color{blue}]
+ubuntu@Ubuntu:~/lx-test$ test -d tmp && cp -v src/file1.txt tmp/
+'src/file1.txt' -> 'tmp/file1.txt'
+\end{Verbatim}
+
+  \item \textbf{Move old.txt into archive/ and keep timestamp}
+\begin{Verbatim}[formatcom=\color{blue}]
+ubuntu@Ubuntu:~/lx-test$ mv -v old.txt archive/
+renamed 'old.txt' -> 'archive/old.txt'
+\end{Verbatim}
+
+  \item \textbf{Create an empty notes.md only if it does not exist}
+\begin{Verbatim}[formatcom=\color{blue}]
+ubuntu@Ubuntu:~/lx-test$ [ -e notes.md ] || : > notes.md
+\end{Verbatim}
+
+  \item \textbf{Show disk usage (human-readable) for src directory}
+\begin{Verbatim}[formatcom=\color{blue}]
+ubuntu@Ubuntu:~/lx-test$ du -sh src
+16K    src
+\end{Verbatim}
+
+
+\subsection{Viewing \& Searching}
+
+    \item \textbf{Print line numbers while displaying \texttt{sys.log}}
+\begin{Verbatim}[formatcom=\color{blue}]
+ubuntu@Ubuntu:~/lx-test$ nl sys.log
+     1  INFO boot ok
+     2  WARN disk low
+     3  ERROR fan fail
+     4  INFO shutdown
+\end{Verbatim}
+
+  \item \textbf{Show only the lines in \texttt{sys.log} that contain ERROR (case-sensitive)}
+\begin{Verbatim}[formatcom=\color{blue}]
+ubuntu@Ubuntu:~/lx-test$ grep 'ERROR' sys.log
+ERROR fan fail
+\end{Verbatim}
+
+  \item \textbf{Count how many distinct words appear in \texttt{words.txt} (case-insensitive)}
+\begin{Verbatim}[formatcom=\color{blue}]
+ubuntu@Ubuntu:~/lx-test$ tr '[:upper:]' '[:lower:]' < words.txt | tr -s '[:space:]' '\n' | sort -u | wc -l
+3
+\end{Verbatim}
+
+  \item \textbf{From \texttt{words.txt}, show lines that start with g or G}
+\begin{Verbatim}[formatcom=\color{blue}]
+ubuntu@Ubuntu:~/lx-test$ grep -E '^[gG]' words.txt
+Gamma
+gamma
+\end{Verbatim}
+
+  \item \textbf{Display the first 2 lines of \texttt{people.csv} without using an editor}
+\begin{Verbatim}[formatcom=\color{blue}]
+ubuntu@Ubuntu:~/lx-test$ head -n 2 people.csv
+id,name,dept
+1,Ada,EE
+\end{Verbatim}
+
+  \item \textbf{Show the last 3 lines of \texttt{sys.log} and keep following if the file grows}
+\begin{Verbatim}[formatcom=\color{blue}]
+ubuntu@Ubuntu:~/lx-test$ tail -n 3 -f sys.log
+WARN disk low
+ERROR fan fail
+INFO shutdown
+\end{Verbatim}
+\subsection{Text Processing}
+  \item \textbf{From people.csv, print only the name column (2nd), excluding the header.}
+\begin{Verbatim}[formatcom=\color{blue}]
+ubuntu@Ubuntu:~/lx-test$ tail -n +2 people.csv | cut -d',' -f2
+Ada
+Linus
+Grace
+Dennis
+\end{Verbatim}
+
+  \item \textbf{Sort words.txt case-insensitively and remove duplicates}
+\begin{Verbatim}[formatcom=\color{blue}]
+ubuntu@Ubuntu:~/lx-test$ sort -f words.txt | uniq -i
+alpha
+beta
+Gamma
+\end{Verbatim}
+
+  \item \textbf{Replace every three with 3 in all files under src/ in-place, creating .bak backups.}
+\begin{Verbatim}[formatcom=\color{blue}]
+ubuntu@Ubuntu:~/lx-test$  find src -type f -exec sed -i.bak 's/three/3/g' {} +
+\end{Verbatim}
+
+  \item \textbf{Print the number of lines, words, and bytes for every *.txt file in src/.}
+\begin{Verbatim}[formatcom=\color{blue}]
+ubuntu@Ubuntu:~/lx-test$ wc src/*.txt
+ 1  4 15 src/file1.txt
+ 1  4 16 src/file2.txt
+ 2  8 31 total
+\end{Verbatim}
+
+\subsection{Permissions \& Ownership}
+
+  \item \textbf{Make tmp/ readable, writable, and searchable only by the owner.}
+\begin{Verbatim}[formatcom=\color{blue}]
+ubuntu@Ubuntu:~/lx-test$ chmod 700 tmp/
+
+\end{Verbatim}
+
+  \item \textbf{Give group execute permission to src/lib recursively without touching others/owner bits.}
+\begin{Verbatim}[formatcom=\color{blue}]
+ubuntu@Ubuntu:~/lx-test$ chmod -R g+x src/lib
+\end{Verbatim}
+
+  \item \textbf{Show the numeric (octal) permissions of src/file2.txt}
+\begin{Verbatim}[formatcom=\color{blue}]
+ubuntu@Ubuntu:~/lx-test$ stat -c "%a" src/file2.txt
+664
+\end{Verbatim}
+
+  \item \textbf{Make notes.md append-only for the owner via file attributes (if supported).}
+\begin{Verbatim}[formatcom=\color{blue}]
+ubuntu@Ubuntu:~/lx-test$ sudo chattr +a notes.md
+\end{Verbatim}
+
+\subsection{Links \& Find}
+
+\item \textbf{Verify whether link-to-file1 is a symlink and show its target path.}
+\begin{Verbatim}[formatcom=\color{blue}]
+luo@ubuntuluo:~/lx-test$ ls -l link-to-file1
+lrwxrwxrwx 1 luo luo 13 Sep 16 18:56 link-to-file1 -> src/file1.txt
+\end{Verbatim}
+
+\item \textbf{Find all regular files under the current tree larger than 40 KiB.}
+\begin{Verbatim}[formatcom=\color{blue}]
+luo@ubuntuluo:~/lx-test$ find . -type f -size +40k
+\end{Verbatim}
+
+\item \textbf{Find files modified in the last 10 minutes under tmp/ and print their sizes.}
+\begin{Verbatim}[formatcom=\color{blue}]
+luo@ubuntuluo:~/lx-test$ find tmp/ -type f -mmin -10 -exec ls -lh {} +
+\end{Verbatim}
+
+\subsection{Processes \& Job Control}
+
+\item \textbf{Show your processes in a tree view.}
+\begin{Verbatim}[formatcom=\color{blue}]
+luo@ubuntuluo:~/lx-test$ pstree -p
+\end{Verbatim}
+
+\item \textbf{Start sleep 120 in the background and show its PID.}
+\begin{Verbatim}[formatcom=\color{blue}]
+luo@ubuntuluo:~/lx-test$ sleep 120 &
+echo $!
+[1] 4474
+4474
+
+\end{Verbatim}
+
+\item \textbf{Send a TERM signal to all sleep processes owned by you (don’t use kill -9).}
+\begin{Verbatim}[formatcom=\color{blue}]
+luo@ubuntuluo:~/lx-test$ pkill -TERM -u "$USER" sleep
+
+[1]  + Terminated  sleep 120
+
+\end{Verbatim}
+
+\item \textbf{Show the top 5 processes by memory usage (one-shot, not interactive).}
+\begin{Verbatim}[formatcom=\color{blue}]
+luo@ubuntuluo:~/lx-test$ ps -eo pid,ppid,user,%mem,%cpu,comm --sort=-%mem | head -n 5
+PID    PPID USER     %MEM %CPU COMMAND
+   1925    1711 luo       9.8  4.0 gnome-shell
+   2451    1925 luo       2.4  0.0 mutter-x11-fram
+   2328    1711 luo       2.0  0.0 gsd-xsettings
+   2245    1925 luo       1.7  0.0 Xwayland
+
+\end{Verbatim}
+
+\subsection{Archiving \& Compression}
+
+\item \textbf{Create a gzipped tar archive src.tgz from src/ with relative paths.}
+\begin{Verbatim}[formatcom=\color{blue}]
+luo@ubuntuluo:~/lx-test$ tar -czf src.tgz -C src .
+\end{Verbatim}
+
+\item \textbf{List the contents of src.tgz without extracting.}
+\begin{Verbatim}[formatcom=\color{blue}]
+luo@ubuntuluo:~/lx-test$ tar -tzf src.tgz
+./
+./file2.txt
+./lib/
+./file1.txt.bak
+./file2.txt.bak
+./file1.txt
+
+\end{Verbatim}
+
+\item \textbf{Extract only file2.txt from src.tgz into tmp/.}
+\begin{Verbatim}[formatcom=\color{blue}]
+luo@ubuntuluo:~/lx-test$ tar -xvzf src.tgz -C tmp ./file2.txt
+./file2.txt
+
+\end{Verbatim}
+
+\subsection{Networking \& System Info}
+
+\item \textbf{Show all listening TCP sockets with associated PIDs (no root assumptions).}
+\begin{Verbatim}[formatcom=\color{blue}]
+annanyajain@ubuntu:-/lx-test$ ss -tlnp
+State   Recv-Q   Send-Q     Local Address:Port     Peer Address:Port  Process 
+\end{Verbatim}
+
+\item \textbf{Print your default route (gateway) in a concise form.}
+\begin{Verbatim}[formatcom=\color{blue}]
+annanyajain@ubuntu:-/lx-test$ ip route show default
+default via 198.19.249.1 dev eth0 proto dhcp src 198.19.249.228 metric 100 
+\end{Verbatim}
+
+\item \textbf{Display kernel name, release, and machine architecture.}
+\begin{Verbatim}[formatcom=\color{blue}]
+annanyajain@ubuntu:-/lx-test$ uname -srm
+Linux 6.12.10-orbstack-00297-gf8f6e015b993 aarch64
+\end{Verbatim}
+
+\item \textbf{Show the last 5 successful logins (or last sessions) on the system.}
+\begin{Verbatim}[formatcom=\color{blue}]
+annanyajain@ubuntu:-/lx-test$ last -n 5
+reboot   system boot  6.12.10-orbstack Tue Sep 16 01:01   still running
+reboot   system boot  6.12.10-orbstack Tue Jan 21 13:27 - 13:40  (00:12)
+reboot   system boot  6.12.10-orbstack Tue Jan 21 10:51 - 10:56  (00:04)
+reboot   system boot  6.12.9-orbstack- Mon Jan 20 19:48 - 19:48  (00:00)
+reboot   system boot  6.12.9-orbstack- Mon Jan 20 17:30 - 19:48  (02:18)
+
+wtmp begins Mon Jan 20 15:07:29 2025
+\end{Verbatim}
+
+
+\subsection{Package \& Services (Debian/Ubuntu)}
+
+\item \textbf{Show the installed version of package coreutils.}
+\begin{Verbatim}[formatcom=\color{blue}]
+annanyajain@ubuntu:-/lx-test$ dpkg -s coreutils | grep '^Version:'
+Version: 8.32-4.1ubuntu1.2
+
+\end{Verbatim}
+
+\item \textbf{Search available packages whose names contain ripgrep.}
+\begin{Verbatim}[formatcom=\color{blue}]
+annanyajain@ubuntu:-/lx-test$ apt search ripgrep
+Sorting... Done
+Full Text Search... Done
+elpa-dumb-jump/jammy 0.5.3-1 all
+  jump to definition for multiple languages without configuration
+
+ripgrep/jammy-updates,jammy-security 13.0.0-2ubuntu0.1 arm64
+  Recursively searches directories for a regex pattern
+
+ugrep/jammy 3.7.2+dfsg-1 arm64
+  faster grep with an interactive query UI
+
+\end{Verbatim}
+
+\item \textbf{Check whether service cron is active and print its status line only.}
+\begin{Verbatim}[formatcom=\color{blue}]
+annanyajain@ubuntu:-/lx-test$ systemctl status cron | grep 'Active:'
+     Active: active (running) since Tue 2025-09-16 01:01:18 EDT; 31min ago
+
+\end{Verbatim}
+
+
+\subsection{Bash \& Scripting}
+
+\item \textbf{Write a one-liner that loops over *.txt in src/ and prints: : (Let's print number of words in the files)}
+\begin{Verbatim}[formatcom=\color{blue}]
+annanyajain@ubuntu:-/lx-test$ for f in src/*.txt; do echo "$f: $(wc -w < "$f")";done
+src/file1.txt: 4
+src/file2.txt: 4
+
+\end{Verbatim}
+
+
+\item \textbf{Write a command that exports CSV rows where dept == "CS" to cs.txt (exclude header)}.
+
+\text{So here, let me first see the structure of a csv file in src directory:}
+
+\begin{Verbatim}[formatcom=\color{blue}]
+annanyajain@ubuntu:-/lx-test$ cat people.csv
+id,name,dept
+1,Ada,EE
+2,Linus,CS
+3,Grace,EE
+4,Dennis,CS
+
+\end{Verbatim}
+
+\text{Now I know that third column is the dept:}
+
+\begin{Verbatim}[formatcom=\color{blue}]
+annanyajain@ubuntu:-/lx-test$ awk -F, 'NR>1 && $3=="CS" {print}' people.csv > cs.txt
+\end{Verbatim}
+
+\text{The output is redirected into the cs.txt file. We can now verify the results:}
+
+\begin{Verbatim}[formatcom=\color{blue}]
+annanyajain@ubuntu:-/lx-test$  cat cs.txt
+2,Linus,CS
+4,Dennis,CS
+\end{Verbatim}
+
+
+\item \textbf{Create a variable X with value 42, print it, then remove it from the environment.
+}
+\begin{Verbatim}[formatcom=\color{blue}]
+annanyajain@ubuntu:-/lx-test$ export X=42; echo $X; unset X
+42
+
+\end{Verbatim}
+The variable X was created with value 42, and printed. The bash command (unset X) was used to remove it from the environment. Now, let's verify whether the variable is still there:
+
+\begin{Verbatim}[formatcom=\color{blue}]
+annanyajain@ubuntu:-/lx-test$ echo $X;
+
+\end{Verbatim}
+\text{Nothing got printed. Hence, it is removed from the environment.}
+
+\end{enumerate}
