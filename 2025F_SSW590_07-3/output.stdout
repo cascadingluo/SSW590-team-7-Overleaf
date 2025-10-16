@@ -28,6 +28,78 @@ Latexmk: Log file says output to 'output.pdf'
 Have index file 'output.idx', output.ind output
 Latexmk: Found bibliography file(s):
   ./bibfile.bib
+Latexmk: applying rule 'makeindex output.idx'...
+Rule 'makeindex output.idx':  Reasons for rerun
+Category 'other':
+  Rerun of 'makeindex output.idx' forced or previously required:
+    Reason or flag: 'Initial set up of rule'
+
+------------
+Run number 1 of rule 'makeindex output.idx'
+------------
+------------
+Running 'makeindex  -o "output.ind" "output.idx"'
+------------
+Latexmk: applying rule 'bibtex output'...
+Rule 'bibtex output':  Reasons for rerun
+Category 'other':
+  Rerun of 'bibtex output' forced or previously required:
+    Reason or flag: 'Initial set up of rule'
+
+------------
+Run number 1 of rule 'bibtex output'
+------------
+------------
+Running 'bibtex  "output.aux"'
+------------
+This is BibTeX, Version 0.99d (TeX Live 2025)
+The top-level auxiliary file: output.aux
+The style file: IEEEtran.bst
+I found no \citation commands---while reading file output.aux
+Database file #1: bibfile.bib
+-- IEEEtran.bst version 1.10 (2002/09/27) by Michael Shell.
+-- http://www.ctan.org/tex-archive/macros/latex/contrib/supported/IEEEtran/
+-- See the "IEEEtran_bst_HOWTO.pdf" manual for usage information.
+
+Done.
+(There was 1 error message)
+Latexmk: applying rule 'pdflatex'...
+Rule 'pdflatex':  Reasons for rerun
+Changed files or newly in use/created:
+  Kanban_Setp.aux
+  itAWSDeployment.aux
+  itAppendix.aux
+  itBugzilla.aux
+  itHosts.aux
+  itLatexDocker.aux
+  itLinux.aux
+  itOverleaf.aux
+  itPasswords.aux
+  itProjectProposal.aux
+  output.lof
+  output.lot
+  output.out
+  output.toc
+  prologue.aux
+
+------------
+Run number 2 of rule 'pdflatex'
+------------
+------------
+Running 'pdflatex -interaction=nonstopmode -synctex=1 -shell-escape  -synctex=1 -interaction=batchmode -recorder --jobname="output"  "itManual.tex"'
+------------
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025) (preloaded format=pdflatex)
+ \write18 enabled.
+entering extended mode
+Latexmk: Getting log file 'output.log'
+Latexmk: Examining 'output.fls'
+Latexmk: Examining 'output.log'
+Latexmk: Index file 'output.idx' was written
+Latexmk: Found input bbl file 'output.bbl'
+Latexmk: Log file says output to 'output.pdf'
+Have index file 'output.idx', output.ind output
+Latexmk: Found bibliography file(s):
+  ./bibfile.bib
 Latexmk: Summary of warnings from last run of *latex:
   Latex found 2 multiply defined reference(s)
   =====Latex reported missing or unavailable character(s).
