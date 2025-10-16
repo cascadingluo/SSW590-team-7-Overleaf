@@ -53,15 +53,10 @@ jobs:
            # apt-get update && apt-get install -y python3-pygments
           # Uncomment and edit if you need extra packages
           pre_compile: |
-            set -eux
-            export PATH="/opt/texlive/texdir/bin/x86_64-linux:$PATH"
-            which xelatex || true
-            xelatex --version || true
             echo "PATH=$PATH"
             tlmgr option repository https://mirror.ctan.org/systems/texlive/tlnet
             tlmgr update --self
             tlmgr install minted fvextra fancyvrb framed upquote lineno xcolor etoolbox siunitx titlesec caption pgfplots
-          post_compile: ":"
 
       - name: Save and commit PDF
         run: |
