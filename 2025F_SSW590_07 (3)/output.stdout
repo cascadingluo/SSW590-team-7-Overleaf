@@ -22,16 +22,6 @@ entering extended mode
 Latexmk: Getting log file 'output.log'
 Latexmk: Examining 'output.fls'
 Latexmk: Examining 'output.log'
-Latexmk: Index file 'output.idx' was written
-Latexmk: Found input bbl file 'output.bbl'
-Latexmk: Log file says output to 'output.pdf'
-Have index file 'output.idx', output.ind output
-Latexmk: Found bibliography file(s):
-  ./bibfile.bib
-Latexmk: Summary of warnings from last run of *latex:
-  Latex found 2 multiply defined reference(s)
-  =====Latex reported missing or unavailable character(s).
-=====See log file for details.
 Latexmk: Errors, in force_mode: so I tried finishing targets
 Collected error summary (may duplicate other messages):
   pdflatex: Command for 'pdflatex' gave return code 1
