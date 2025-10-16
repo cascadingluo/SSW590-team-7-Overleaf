@@ -6,7 +6,7 @@
 
 \title{Deploying Overleaf on a Shared DigitalOcean Droplet (with Existing Bugzilla)}
 \section{Overview}
-TThis document explains the complete process of deploying \textbf{Overleaf (Community Edition)} on a DigitalOcean droplet that already hosted \textbf{Bugzilla} via Docker.  
+This document explains the complete process of deploying \textbf{Overleaf (Community Edition)} on a DigitalOcean droplet that already hosted \textbf{Bugzilla} via Docker.  
 It includes the initial access issues, configuration steps, and debugging process that led to a fully functional Overleaf instance running alongside Bugzilla on the same host.
 
 \section{Initial Access Issue}
@@ -187,7 +187,7 @@ Result:
 HTTP/1.1 200 OK
 \end{minted}
 
-\section{Conclusion on Setting up Overleaf}
+\section{Conclusion}
 The deployment succeeded after:
 \begin{enumerate}
   \item Gaining SSH access by adding my GitHub SSH key to the droplet.
@@ -213,7 +213,3 @@ This was what was seen:
     \centering
     \includegraphics[width=1.0\linewidth]{png/finally_fixed.png}
 \end{figure}
-
-\\
-
-
