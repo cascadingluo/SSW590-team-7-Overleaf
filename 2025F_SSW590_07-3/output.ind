@@ -1,6 +1,6 @@
 \begin{theindex}
 
-  \item appendix, \hyperpage{41}
+  \item appendix, \hyperpage{58}
   \item AWS, \hyperpage{16}
 
   \indexspace
@@ -10,14 +10,14 @@
   \indexspace
 
   \item Chapter
-    \subitem Appendix, \hyperpage{41}
+    \subitem Appendix, \hyperpage{58}
     \subitem AWS, \hyperpage{16}
     \subitem Bugzilla, \hyperpage{28}
     \subitem Hosts, \hyperpage{2}
     \subitem Kanban Setup, \hyperpage{3}
     \subitem LaTeX Docker, \hyperpage{24}
     \subitem Linux Commands, \hyperpage{7}
-    \subitem Overleaf, \hyperpage{33}
+    \subitem Overleaf, \hyperpage{33}, \hyperpage{41}
     \subitem Passwords, \hyperpage{1}
     \subitem Project Proposal, \hyperpage{15}
 
@@ -36,7 +36,7 @@
 
   \indexspace
 
-  \item Overleaf, \hyperpage{33}
+  \item Overleaf, \hyperpage{33}, \hyperpage{41}
 
   \indexspace
 
