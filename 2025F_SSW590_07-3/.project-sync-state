@@ -19,6 +19,7 @@ itPasswords.tex
 itProjectProposal.tex
 prologue.tex
 latexmkrc
+itPrometheusGrafana.tex
 eps/UseCases/MyUseCaseDiagram.eps
 eps/UseCases/dsnHelloWorld.eps
 eps/UseCases/dsnMyDiagram.eps
@@ -37,5 +38,7 @@ png/Jira_team_setup.png
 png/creating_kanban_project2.png
 png/creating_kanban_project.png
 png/kanban_example.png
+png/Grafana.png
+png/Prometheus.png
 visio/UseCases/dsnSampleUseCase.vsd
-stateHash:575a3e76a97dc64c60e2c28302b92f71f08cb2b6
+stateHash:f9a097937471776f7f92bab31fd4166c4af70a97
