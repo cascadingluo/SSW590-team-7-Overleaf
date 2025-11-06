@@ -20,6 +20,7 @@ itProjectProposal.tex
 prologue.tex
 latexmkrc
 itPrometheusGrafana.tex
+itJenkins.tex
 eps/UseCases/MyUseCaseDiagram.eps
 eps/UseCases/dsnHelloWorld.eps
 eps/UseCases/dsnMyDiagram.eps
@@ -40,5 +41,9 @@ png/creating_kanban_project.png
 png/kanban_example.png
 png/Grafana.png
 png/Prometheus.png
+png/passes_test_cases.png
+png/tests_passed.png
+png/Showing2testspassed_and1failed.png
+png/Showingtestfailed.png
 visio/UseCases/dsnSampleUseCase.vsd
-stateHash:9d733a5aa21c46c209f1d9a9b7ff450a300da86e
+stateHash:530648ae4ed8990d93c7674b2aee22515c157a2c
