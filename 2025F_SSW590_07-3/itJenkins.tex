@@ -29,110 +29,110 @@ volumes:
   jenkins_home:
 \end{minted}
 
-To start Jenkins using Docker Compose, run:
+% To start Jenkins using Docker Compose, run:
 
-\begin{minted}{bash} 
-$ docker compose up -d 
-\end{minted}
+% \begin{minted}{bash} 
+% $ docker compose up -d 
+% \end{minted}
 
-Once the container is running, Jenkins can be accessed at \url{http://localhost:8080}. The initial admin password is retrieved with:
+% Once the container is running, Jenkins can be accessed at \url{http://localhost:8080}. The initial admin password is retrieved with:
 
-\begin{minted}{bash} 
-$ docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword 
-\end{minted}
+% \begin{minted}{bash} 
+% $ docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword 
+% \end{minted}
 
-\section{Part 2: Python + Pytest Project} The following directory structure was created for the Python testing project:
+% \section{Part 2: Python + Pytest Project} The following directory structure was created for the Python testing project:
 
-\begin{minted}{bash} 
-jenkins-python-pytest-demo/ 
-|-- Jenkinsfile 
-|-- requirements.txt 
-|-- tests/ 
-  -- test_sample.py 
-\end{minted}
+% \begin{minted}{bash} 
+% jenkins-python-pytest-demo/ 
+% |-- Jenkinsfile 
+% |-- requirements.txt 
+% |-- tests/ 
+%   |-- test_sample.py 
+% \end{minted}
 
-The \text{requirements.txt} file includes the following dependency:
+% The \text{requirements.txt} file includes the following dependency:
 
-\begin{minted}{text} 
-pytest 
-\end{minted}
+% \begin{minted}{text} 
+% pytest 
+% \end{minted}
 
-\begin{minted}{python}
-def test_addition():
-    assert 1 + 1 == 2
+% \begin{minted}{python}
+% def test_addition():
+%     assert 1 + 1 == 2
 
-def test_subtraction():
-    assert 5 - 2 == 3
+% def test_subtraction():
+%     assert 5 - 2 == 3
 
-def test_failure_example():
-    assert 2 * 2 == 5  # This will fail
-\end{minted}
+% def test_failure_example():
+%     assert 2 * 2 == 5  # This will fail
+% \end{minted}
 
-\section{Part 3: Jenkins Pipeline Configuration} A Jenkins Pipeline was configured to automate dependency installation, test execution, and reporting using the following Jenkinsfile:
+% \section{Part 3: Jenkins Pipeline Configuration} A Jenkins Pipeline was configured to automate dependency installation, test execution, and reporting using the following Jenkinsfile:
 
-\begin{minted}{groovy}
-pipeline {
-    agent any
-    stages {
-        stage('Install dependencies') {
-            steps {
-                sh 'python3 -m venv venv'
-                sh './venv/bin/pip install -r requirements.txt'
-            }
-        }
-        stage('Run tests') {
-            steps {
-                sh './venv/bin/pytest --junitxml=report.xml'
-            }
-        }
-        stage('Publish Report') {
-            steps {
-                junit 'report.xml'
-            }
-        }
-    }
-}
-\end{minted}
+% \begin{minted}{groovy}
+% pipeline {
+%     agent any
+%     stages {
+%         stage('Install dependencies') {
+%             steps {
+%                 sh 'python3 -m venv venv'
+%                 sh './venv/bin/pip install -r requirements.txt'
+%             }
+%         }
+%         stage('Run tests') {
+%             steps {
+%                 sh './venv/bin/pytest --junitxml=report.xml'
+%             }
+%         }
+%         stage('Publish Report') {
+%             steps {
+%                 junit 'report.xml'
+%             }
+%         }
+%     }
+% }
+% \end{minted}
 
-\section{Part 4: Git Integration} The project was initialized as a Git repository and pushed to GitHub using:
+% \section{Part 4: Git Integration} The project was initialized as a Git repository and pushed to GitHub using:
 
-\begin{minted}{bash} 
-$ git init 
-$ git add . 
-$ git commit -m "Initial commit"
-$ git remote add origin https://github.com/JainAnnanya/SSW590-team-7-Jenkins.git
-$ git branch -M main 
-$ git push -u origin main 
-\end{minted}
+% \begin{minted}{bash} 
+% $ git init 
+% $ git add . 
+% $ git commit -m "Initial commit"
+% $ git remote add origin https://github.com/JainAnnanya/SSW590-team-7-Jenkins.git
+% $ git branch -M main 
+% $ git push -u origin main 
+% \end{minted}
 
-In Jenkins, the repository URL was added under the "Pipeline script from SCM" option, and the branch was set to \text{main} to automatically load the Jenkinsfile during job execution.
+% In Jenkins, the repository URL was added under the "Pipeline script from SCM" option, and the branch was set to \text{main} to automatically load the Jenkinsfile during job execution.
 
-\section{Part 5: Running the Pipeline and Viewing Test Reports} Upon running the Jenkins job, the following stages were executed:
+% \section{Part 5: Running the Pipeline and Viewing Test Reports} Upon running the Jenkins job, the following stages were executed:
 
-\begin{itemize} 
-\item Install dependencies 
-\item Run tests 
-\item Publish report 
-\end{itemize}
+% \begin{itemize} 
+% \item Install dependencies 
+% \item Run tests 
+% \item Publish report 
+% \end{itemize}
 
-Passed test cases by running only 1st and 2nd test case
-\begin{center}
-  \includegraphics[width=0.5\textwidth]{png/tests_passed.png}
-\end{center}
+% Passed test cases by running only 1st and 2nd test case
+% \begin{center}
+%   \includegraphics[width=0.5\textwidth]{png/tests_passed.png}
+% \end{center}
 
-\begin{center}
-  \includegraphics[width=0.9\textwidth]{png/passes_test_cases.png}
-  \caption{Jenkins UI after successful job execution}
-\end{center}
+% \begin{center}
+%   \includegraphics[width=0.9\textwidth]{png/passes_test_cases.png}
+%   \caption{Jenkins UI after successful job execution}
+% \end{center}
 
-When running all three test cases, we can see one test case failed and two passed. 
+% When running all three test cases, we can see one test case failed and two passed. 
 
-\begin{center}
-  \includegraphics[width=0.5\textwidth]{png/Showing2testspassed_and1failed.png}
-\end{center}
+% \begin{center}
+%   \includegraphics[width=0.5\textwidth]{png/Showing2testspassed_and1failed.png}
+% \end{center}
 
-\begin{center}
-  \includegraphics[width=0.5\textwidth]{png/Showingtestfailed.png}
-\end{center}
+% \begin{center}
+%   \includegraphics[width=0.5\textwidth]{png/Showingtestfailed.png}
+% \end{center}
 
-The test results were available under the "Test Result" tab in Jenkins. The failing test in the file was reported as expected. The pipeline stage view provided a graphical representation of each stage's status. 
+% The test results were available under the "Test Result" tab in Jenkins. The failing test in the file was reported as expected. The pipeline stage view provided a graphical representation of each stage's status. 
