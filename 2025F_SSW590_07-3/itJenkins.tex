@@ -9,11 +9,10 @@
 
 This document provides detailed documentation of a CI/CD pipeline setup using Jenkins in Docker, a Python project with Pytest, and Git integration for source control.
 
-\section{Part 1: Jenkins Setup in Docker} To set up Jenkins within a Docker container, the following \texttt{docker-compose.yml} file was created:
+\section{Part 1: Jenkins Setup in Docker} To set up Jenkins within a Docker container, the following \text{docker-compose.yml} file was created:
 
 
 \begin{minted}{yaml}
-# docker-compose.yml
 version: '3.8'
 services:
   jenkins:
@@ -59,7 +58,6 @@ pytest
 \end{minted}
 
 \begin{minted}{python}
-# test_sample.py
 def test_addition():
     assert 1 + 1 == 2
 
@@ -128,8 +126,6 @@ Passed test cases by running only 1st and 2nd test case
 \end{center}
 
 When running all three test cases, we can see one test case failed and two passed. 
-
-\\
 
 \begin{center}
   \includegraphics[width=0.5\textwidth]{png/Showing2testspassed_and1failed.png}
