@@ -14,3 +14,6 @@
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
+\contentsline {figure}{\numberline {13.1}{\ignorespaces switching between web1 and web2 on: http://174.138.68.199:8080/}}{71}{figure.13.1}%
+\contentsline {figure}{\numberline {13.2}{\ignorespaces verifying that both our load balancer and vhost is working}}{73}{figure.13.2}%
+\addvspace {10\p@ }

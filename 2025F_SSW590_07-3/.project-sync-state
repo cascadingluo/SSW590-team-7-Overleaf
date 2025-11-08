@@ -21,6 +21,7 @@ prologue.tex
 latexmkrc
 itPrometheusGrafana.tex
 itJenkins.tex
+itLoadBalancer+VHost.tex
 eps/UseCases/MyUseCaseDiagram.eps
 eps/UseCases/dsnHelloWorld.eps
 eps/UseCases/dsnMyDiagram.eps
@@ -45,5 +46,8 @@ png/passes_test_cases.png
 png/tests_passed.png
 png/Showing2testspassed_and1failed.png
 png/Showingtestfailed.png
+png/balance_vhost.png
+png/Web1.png
+png/Web2.png
 visio/UseCases/dsnSampleUseCase.vsd
-stateHash:eaa31068989aa2be8f862ffb32f3477439420aa7
+stateHash:cefc9f1d0ee54e6de8a030940da17b76a06de8dc
