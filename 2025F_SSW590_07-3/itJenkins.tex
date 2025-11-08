@@ -68,52 +68,52 @@ def test_failure_example():
     assert 2 * 2 == 5  # This will fail
 \end{minted}
 
-% \section{Part 3: Jenkins Pipeline Configuration} A Jenkins Pipeline was configured to automate dependency installation, test execution, and reporting using the following Jenkinsfile:
+\section{Part 3: Jenkins Pipeline Configuration} A Jenkins Pipeline was configured to automate dependency installation, test execution, and reporting using the following Jenkinsfile:
 
-% \begin{minted}{groovy}
-% pipeline {
-%     agent any
-%     stages {
-%         stage('Install dependencies') {
-%             steps {
-%                 sh 'python3 -m venv venv'
-%                 sh './venv/bin/pip install -r requirements.txt'
-%             }
-%         }
-%         stage('Run tests') {
-%             steps {
-%                 sh './venv/bin/pytest --junitxml=report.xml'
-%             }
-%         }
-%         stage('Publish Report') {
-%             steps {
-%                 junit 'report.xml'
-%             }
-%         }
-%     }
-% }
-% \end{minted}
+\begin{minted}{groovy}
+pipeline {
+    agent any
+    stages {
+        stage('Install dependencies') {
+            steps {
+                sh 'python3 -m venv venv'
+                sh './venv/bin/pip install -r requirements.txt'
+            }
+        }
+        stage('Run tests') {
+            steps {
+                sh './venv/bin/pytest --junitxml=report.xml'
+            }
+        }
+        stage('Publish Report') {
+            steps {
+                junit 'report.xml'
+            }
+        }
+    }
+}
+\end{minted}
 
-% \section{Part 4: Git Integration} The project was initialized as a Git repository and pushed to GitHub using:
+\section{Part 4: Git Integration} The project was initialized as a Git repository and pushed to GitHub using:
 
-% \begin{minted}{bash} 
-% $ git init 
-% $ git add . 
-% $ git commit -m "Initial commit"
-% $ git remote add origin https://github.com/JainAnnanya/SSW590-team-7-Jenkins.git
-% $ git branch -M main 
-% $ git push -u origin main 
-% \end{minted}
+\begin{minted}{bash} 
+$ git init 
+$ git add . 
+$ git commit -m "Initial commit"
+$ git remote add origin https://github.com/JainAnnanya/SSW590-team-7-Jenkins.git
+$ git branch -M main 
+$ git push -u origin main 
+\end{minted}
 
-% In Jenkins, the repository URL was added under the "Pipeline script from SCM" option, and the branch was set to \text{main} to automatically load the Jenkinsfile during job execution.
+In Jenkins, the repository URL was added under the "Pipeline script from SCM" option, and the branch was set to \text{main} to automatically load the Jenkinsfile during job execution.
 
-% \section{Part 5: Running the Pipeline and Viewing Test Reports} Upon running the Jenkins job, the following stages were executed:
+\section{Part 5: Running the Pipeline and Viewing Test Reports} Upon running the Jenkins job, the following stages were executed:
 
-% \begin{itemize} 
-% \item Install dependencies 
-% \item Run tests 
-% \item Publish report 
-% \end{itemize}
+\begin{itemize} 
+\item Install dependencies 
+\item Run tests 
+\item Publish report 
+\end{itemize}
 
 % Passed test cases by running only 1st and 2nd test case
 % \begin{center}
