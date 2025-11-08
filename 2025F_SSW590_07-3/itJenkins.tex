@@ -29,44 +29,44 @@ volumes:
   jenkins_home:
 \end{minted}
 
-% To start Jenkins using Docker Compose, run:
+To start Jenkins using Docker Compose, run:
 
-% \begin{minted}{bash} 
-% $ docker compose up -d 
-% \end{minted}
+\begin{minted}{bash} 
+$ docker compose up -d 
+\end{minted}
 
-% Once the container is running, Jenkins can be accessed at \url{http://localhost:8080}. The initial admin password is retrieved with:
+Once the container is running, Jenkins can be accessed at \url{http://localhost:8080}. The initial admin password is retrieved with:
 
-% \begin{minted}{bash} 
-% $ docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword 
-% \end{minted}
+\begin{minted}{bash} 
+$ docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword 
+\end{minted}
 
-% \section{Part 2: Python + Pytest Project} The following directory structure was created for the Python testing project:
+\section{Part 2: Python + Pytest Project} The following directory structure was created for the Python testing project:
 
-% \begin{minted}{bash} 
-% jenkins-python-pytest-demo/ 
-% |-- Jenkinsfile 
-% |-- requirements.txt 
-% |-- tests/ 
-%   |-- test_sample.py 
-% \end{minted}
+\begin{minted}{bash} 
+jenkins-python-pytest-demo/ 
+|-- Jenkinsfile 
+|-- requirements.txt 
+|-- tests/ 
+  |-- test_sample.py 
+\end{minted}
 
-% The \text{requirements.txt} file includes the following dependency:
+The \text{requirements.txt} file includes the following dependency:
 
-% \begin{minted}{text} 
-% pytest 
-% \end{minted}
+\begin{minted}{text} 
+pytest 
+\end{minted}
 
-% \begin{minted}{python}
-% def test_addition():
-%     assert 1 + 1 == 2
+\begin{minted}{python}
+def test_addition():
+    assert 1 + 1 == 2
 
-% def test_subtraction():
-%     assert 5 - 2 == 3
+def test_subtraction():
+    assert 5 - 2 == 3
 
-% def test_failure_example():
-%     assert 2 * 2 == 5  # This will fail
-% \end{minted}
+def test_failure_example():
+    assert 2 * 2 == 5  # This will fail
+\end{minted}
 
 % \section{Part 3: Jenkins Pipeline Configuration} A Jenkins Pipeline was configured to automate dependency installation, test execution, and reporting using the following Jenkinsfile:
 
