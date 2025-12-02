@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A.V.A Interface</title>
+  <link rel="stylesheet" href="/static/A.V.A_styling.css"> <!-- Path to CSS -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+  <script src="/static/emotion-analysis.js"></script>
+  <style>
+    /* Styling for the speed bar container */
+    .speed-bar-container {
+      width: 300px;
+      height: 30px;
+      background-color: #8a0000;
+      border-radius: 5px;
+      overflow: hidden;
+      margin-top: 20px;
+    }
+
+    /* Styling for the bar that fills up */
+    .speed-bar {
+      height: 100%;
+      width: 0;
+      background-color: #1c07a4;
+      transition: width 0.3s;
+    }
+
+    /* Styling for the slider */
+    .slider {
+      width: 100%;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header Section -->
+    <header class="header">
+      <div class="header-left">
+        <button class="header-btn">
+          <img src="/static/ava_logo.png" alt="AVA logo" class="ava_logo">
+        </button>
+      </div>
+      <div class="header-center">
+        <h2>Welcome to A.V.A, your personal AI health assistant...</h2>
+      </div>
+      <div class="header-right">
+        <a class="header-btn" href="/emotion_analysis_page">Emotion Analysis</a>
+        <a class="header-btn" href="/reminders">reminders</a>
+        <a class="header-btn" href="/logout">logout</a>
+      </div>
+    </header>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <button class="talk-button">Click me if you want to talk instead!</button>
+      <button class="speak-button">Click me if you want the chatbot to stop speaking!</button>
+    </aside>
+
+    <!-- Chat Window -->
+    <main class="chat-window">
+      <!-- User messages will be appended here dynamically -->
+    </main>
+
+    <!-- Speed Bar Section -->
+    <div class="speed-bar-section">
+      <h3>Adjust Speed:</h3>
+      <input type="range" min="0" max="100" value="0" class="slider" id="speedSlider">
+      <div class="speed-bar-container">
+        <div class="speed-bar" id="speedBar"></div>
+      </div>
+      <p>Current Speed: <span id="speedValue">0</span>%</p>
+    </div>
+
+    <!-- User Input Section -->
+    <div class="user-message">
+      <input id="input" type="text" name="input" placeholder="Type your message..." class="input-box">
+      <button type="submit" class="enter-button">Enter</button>
+    </div>
+  </div>
+
+  <script>
+    const socket = io();
+
+    let isListening = false;
+    let isSpeaking = true;
+
+    const inputBox = document.querySelector('.input-box');
+
+    // Function to add initial messages to the chat window
+    function addMessage(message, isBot = true) {
+      const messagesDiv = document.querySelector('.chat-window');
+      const messageElement = document.createElement('div');
+      messageElement.className = isBot ? 'message left' : 'message right';
+
+      messageElement.innerHTML = isBot
+        ? `<div class="profile-pic"></div> <!-- Placeholder for AVA's profile -->
+           <div class="bubble">${message}</div>`
+        : `<div class="bubble">${message}</div>`;
+
+      messagesDiv.prepend(messageElement); // Adds to the top
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    const speakingButton = document.querySelector('.speak-button')
+
+    speakingButton.addEventListener('click', function() {
+      // isSpeaking != isSpeaking;
+      if(isSpeaking) {
+        isSpeaking = false;
+        window.speechSynthesis.cancel();
+        speakingButton.textContent = "Click me if you want the chatbot to speak!";
+      }
+      else {
+        isSpeaking = true;
+        speakingButton.textContent = "Click me if you want the chatbot to stop speaking!";
+      }
+      console.log(isSpeaking);
+    });
+
+    // Fetch the initial chatbot prompt
+    document.addEventListener("DOMContentLoaded", () => {
+      fetch('/api/initChat', {
+        method: 'POST',
+      })
+      .then(response => response.json())
+      .then(data => {
+        addMessage(data.reply);
+        const utterance = new SpeechSynthesisUtterance(data.reply);
+        utterance.rate = speechRate;
+        utterance.pitch = 1.2;
+        if(isSpeaking){
+          window.speechSynthesis.speak(utterance);
+        }
+      })
+      .catch(error => console.error('Error initializing chat:', error));
+    });
+
+    // Function to handle sending the message
+    async function sendMessage() {
+      const userId = sessionStorage.getItem('user_id'); 
+      const userInput = inputBox.value;
+
+      if (userInput.trim() === "") return; // Prevent empty messages
+
+      // Append user message to the chat
+      const userMessage = document.createElement('div');
+      userMessage.className = 'message right';
+      userMessage.innerHTML = `<div class="bubble">${userInput}</div>`;
+      document.querySelector('.chat-window').prepend(userMessage);
+
+      // Clear the input box after sending the message
+      inputBox.value = "";
+
+      // Send the message to the backend
+      fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ input: userInput, userId: userId }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        const botMessage = document.createElement('div');
+        botMessage.className = 'message left';
+        botMessage.innerHTML = `
+          <div class="profile-pic"></div>
+          <div class="bubble">${data.reply}</div>`;
+        document.querySelector('.chat-window').prepend(botMessage);
+
+        const utterance = new SpeechSynthesisUtterance(data.reply);
+        utterance.rate = speechRate;
+        utterance.pitch = 1.2;
+        if(isSpeaking) {
+          window.speechSynthesis.speak(utterance);
+        }
+
+        // Save the chat history
+        fetch('/save_history', {
+          method: 'POST', 
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ 
+            messages: [
+              { role: 'user', content: userInput, timestamp: new Date() },
+              { role: 'bot', content: data.reply, timestamp: new Date() }
+            ]
+          })
+        });
+      })
+      .catch(error => {
+        console.error('Error getting bot response:', error);
+        const errorMessage = document.createElement('div');
+        errorMessage.className = 'message left';
+        errorMessage.innerHTML = `
+          <div class="profile-pic"></div>
+          <div class="bubble">Sorry, there was an error. Please try again.</div>`;
+        document.querySelector('.chat-window').prepend(errorMessage);
+      });
+    }
+    
+
+    // Event listeners for Enter button and input box
+    document.querySelector('.enter-button').addEventListener('click', function() {
+      if (!isListening) sendMessage();
+    });
+    inputBox.addEventListener('keydown', function(event) {
+      if (event.key === 'Enter' && !isListening) {
+        event.preventDefault();
+        sendMessage();
+      }
+    });
+
+    // Speech-to-text functionality
+    document.querySelector('.talk-button').addEventListener('click', function() {
+      const recognition = new webkitSpeechRecognition();
+      recognition.lang = 'en-US';
+
+      isListening = true;
+      inputBox.disabled = true;
+  
+      recognition.onresult = function(event) {
+        const transcript = event.results[0][0].transcript;
+        inputBox.value = transcript;
+        sendMessage();
+      };
+
+      recognition.onend = function() {
+        isListening = false;
+        inputBox.disabled = false;
+      };
+
+      recognition.start();
+    });
+
+    // Speed bar functionality
+    const speedSlider = document.getElementById("speedSlider");
+    const speedBar = document.getElementById("speedBar");
+    const speedValue = document.getElementById("speedValue");
+    let speechRate = 0.9;
+
+    speedSlider.addEventListener("input", function() {
+      const speed = speedSlider.value;
+      speedValue.textContent = speed;
+      speedBar.style.width = speed + "%";
+    });
+
+    socket.on('reminder', function(reminder) {
+        showReminderNotification(reminder);
+    });
+
+    // Function to show notification for reminders
+    function showReminderNotification(reminder) {
+        const notification = document.createElement("div");
+        notification.className = "reminder-notification";
+        notification.innerHTML = `
+            <div class="bubble">${reminder.text} at ${reminder.time}</div>
+            <button onclick="this.parentNode.remove()">Done</button>
+        `;
+        document.querySelector('.chat-window').appendChild(notification);
+
+        const utterance = new SpeechSynthesisUtterance(reminder.text);
+        utterance.rate = speechRate;
+        utterance.pitch = 1.2;
+        window.speechSynthesis.speak(utterance);
+    }
+
+    // Example of scheduling the notification (you'd need to implement the scheduling logic)
+    // setTimeout(() => showReminderNotification({ text: "Example Reminder", time: "7:00 PM" }), 5000); // Example notification in 5 seconds
+
+    // jQuery for sending message
+    $(document).ready(function() {
+      $('#send').click(function() {
+          var message = $('#message').val();
+          $.ajax({
+              url: '/send_messages', 
+              type: 'POST',
+              contentType: 'application/json',
+              data: JSON.stringify({ message: message }),
+              success: function(response) {
+                  $('#chatbox').append('<div>' + response.reply + '</div>');
+              },
+              error: function(error) {
+                  console.error('Error:', error);
+              }
+          });
+      });
+    });
+  </script>
+</body>
+</html>

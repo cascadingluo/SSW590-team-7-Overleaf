@@ -1,0 +1,39 @@
+# flask
+# pymongo
+# werkzeug
+# pytest
+# pytest-cov
+# python-dotenv
+# selenium
+# flask_socketio
+# APScheduler
+# keras
+# keras-preprocessing
+# numpy
+# scikit-learn
+# nltk
+# pandas
+# fastapi
+# uvicorn
+# pydantic
+# python-multipart
+# prometheus-client
+# gunicorn
+# prometheus-flask-exporter
+# google-generativeai
+# selenium==4.9.1      # last version supporting Python 3.8 (if you keep 3.8)
+
+flask
+pymongo
+werkzeug
+pytest
+pytest-cov
+python-dotenv
+selenium
+google-genai
+flask_socketio
+APScheduler
+numpy
+pandas
+prometheus-client
+prometheus-flask-exporter

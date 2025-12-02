@@ -8,3 +8,6 @@
 *.fdb_latexmk
 *.fls
 build/
+*node_modules/*
+__pycache__/
+*.pyc
