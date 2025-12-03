@@ -83,7 +83,7 @@ a couple of times and watched it alternate between
 <h1>Hello from Web 2 </h1> 
 \end{minted}
 
-We ran into the issue of when we visited the site it failed to connect, to fix that, we went to digital ocean and added a new TCP protocol for 8080, and after that we were able to see the site alternating when refreshed:
+We ran into the issue of when we visted the site it failed to connect, to fix that, we went to digital ocean and added a new TCP protocol for 8080, and after that we were able to see the site alternating when refreshed:
 
 \begin{figure}
       \centering
@@ -104,7 +104,7 @@ http {
                 listen 80;
                 server_name web1.annanyajain.me;
                 location / {
-                        proxy_pass web1.annanyajain.me;
+                        proxy_pass http://web1:80;
                         proxy_set_header Host $host;
                         proxy_set_header X-Real-IP $remote_addr;
                         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;

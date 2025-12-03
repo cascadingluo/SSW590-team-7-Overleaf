@@ -5,14 +5,15 @@
 \label{Chapter::Install Jenkins and Run a Pytest}}}
 
 \section{Introduction}
-% \label{sec:Install Jenkins and Run a Pytest}
+\label{sec:Install Jenkins and Run a Pytest}
 
 This document provides detailed documentation of a CI/CD pipeline setup using Jenkins in Docker, a Python project with Pytest, and Git integration for source control.
 
-\section{Part 1: Jenkins Setup in Docker} To set up Jenkins within a Docker container, the following \text{docker-compose.yml} file was created:
+\section{Part 1: Jenkins Setup in Docker} To set up Jenkins within a Docker container, the following \texttt{docker-compose.yml} file was created:
 
 
 \begin{minted}{yaml}
+# docker-compose.yml
 version: '3.8'
 services:
   jenkins:
@@ -48,16 +49,17 @@ jenkins-python-pytest-demo/
 |-- Jenkinsfile 
 |-- requirements.txt 
 |-- tests/ 
-  |-- test_sample.py 
+  -- test_sample.py 
 \end{minted}
 
-The \text{requirements.txt} file includes the following dependency:
+The \texttt{requirements.txt} file includes the following dependency:
 
 \begin{minted}{text} 
 pytest 
 \end{minted}
 
 \begin{minted}{python}
+# test_sample.py
 def test_addition():
     assert 1 + 1 == 2
 
@@ -118,14 +120,18 @@ In Jenkins, the repository URL was added under the "Pipeline script from SCM" op
 Passed test cases by running only 1st and 2nd test case
 \begin{center}
   \includegraphics[width=0.5\textwidth]{png/tests_passed.png}
+ 
 \end{center}
 
 \begin{center}
-  \includegraphics[width=0.9\textwidth]{png/passes_test_cases.png}
-  % \caption{Jenkins UI after successful job execution}
+  \includegraphics[width=0.9\textwidth]{png/passes_test_cases.png}\\ 
+  
+  \caption{Jenkins UI after successful job execution}
 \end{center}
 
 When running all three test cases, we can see one test case failed and two passed. 
+
+\\
 
 \begin{center}
   \includegraphics[width=0.5\textwidth]{png/Showing2testspassed_and1failed.png}
@@ -133,7 +139,7 @@ When running all three test cases, we can see one test case failed and two passe
 
 \begin{center}
   \includegraphics[width=0.5\textwidth]{png/Showingtestfailed.png}
+
 \end{center}
 
 The test results were available under the "Test Result" tab in Jenkins. The failing test in the file was reported as expected. The pipeline stage view provided a graphical representation of each stage's status. 
-
