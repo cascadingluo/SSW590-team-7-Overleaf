@@ -1,0 +1,28 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\@input{prologue.aux}
+\providecommand\@newglossary[4]{}
+\@newglossary{main}{glg}{gls}{glo}
+\providecommand\@gls@reference[3]{}
+\@input{itPasswords.aux}
+\@input{itHosts.aux}
+\@input{Kanban_Setp.aux}
+\@input{itLinux.aux}
+\@input{itProjectProposal.aux}
+\@input{itAWSDeployment.aux}
+\@input{itLatexDocker.aux}
+\@input{itBugzilla.aux}
+\@input{itOverleaf.aux}
+\@input{itPrometheusGrafana.aux}
+\@input{itJenkins.aux}
+\@input{itLoadBalancer+VHost.aux}
+\@input{itAppendix.aux}
+\bibdata{bibfile}
+\bibstyle{IEEEtran}
+\@writefile{toc}{\contentsline {chapter}{Bibliography}{77}{appendix*.4}\protected@file@percent }
+\@LN@col{1}
+\@LN@col{2}
+\xdef \mintedoldcachechecksum{\detokenize{\minted@cachechecksum }}
+\gdef \@abspage@last{88}
